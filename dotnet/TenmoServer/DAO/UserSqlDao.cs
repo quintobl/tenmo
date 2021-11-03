@@ -107,22 +107,19 @@ namespace TenmoServer.DAO
             return GetUser(username);
         }
 
-        public Account GetAccountBalance(string username, string password)
+        public Account GetAccountBalance(int userId)
         {
-            IPasswordHasher passwordHasher = new PasswordHasher();
-            PasswordHash hash = passwordHasher.ComputeHash(password);
             Account account = new Account();
-
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT a.balance " +
+                    SqlCommand cmd = new SqlCommand("SELECT a.balance, a.account_id" +
                                                     "FROM accounts a JOIN users u ON a.user_id = u.user_id " +
                                                     "WHERE a.user_id = @userid;", conn);
-                    cmd.Parameters.AddWithValue("@userid", username);
+                    cmd.Parameters.AddWithValue("@userid", userId);
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     if (reader.Read())

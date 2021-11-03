@@ -26,7 +26,7 @@ namespace TenmoServer.Controllers
         public ActionResult<decimal> GetMyBalance()
         {
             User user = _userDao.GetUser(User.Identity.Name);
-            Account userAccount = _userDao.GetAccountBalance(user.Username, user.PasswordHash);
+            Account userAccount = _userDao.GetAccountBalance();
 
             if (user != null) 
             {
