@@ -10,6 +10,6 @@ namespace TenmoServer.DAO
         List<User> GetUsers();
         Account GetAccountBalance(int userId);
 
-        Transfer SendATransfer(int userId, decimal amount);
+        Transfer SendATransfer(int toUserId, int fromUserId, decimal amount);
     }
 }

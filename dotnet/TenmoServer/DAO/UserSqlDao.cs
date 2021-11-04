@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using TenmoServer.Models;
 using TenmoServer.Security;
 using TenmoServer.Security.Models;
+using System.Security.Claims;
 
 namespace TenmoServer.DAO
 {
@@ -135,8 +136,9 @@ namespace TenmoServer.DAO
         }
 
 
-        public Transfer SendATransfer(int userId, decimal amount)
+        public Transfer SendATransfer(int toUserId, int fromUserId, decimal amount)
         {
+            
             Transfer transfer = new Transfer();
             try
             {
@@ -144,38 +146,59 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT users.user_id, users.username" +
-                                                      "FROM transfers" +
-                                                      "JOIN accounts ON accounts.account_id = transfers.account_from " +
-                                                      "AND " +
-                                                      "transfers.account_to = @userId", conn);
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                    cmd.ExecuteNonQuery();
-
-                    cmd = new SqlCommand("UPDATE accounts SET accounts.balance -= transfers.amount" +
-                                            "FROM accounts" +
-                                            "JOIN users ON users.user_id = accounts.user_id" +
-                                            "JOIN transfers ON accounts.account_id = transfers.account_from" +
-                                            "WHERE accounts.user_id = transfers.account_from", conn);
-                                        
-                    
-
-                    cmd = new SqlCommand("INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount)" +
-                                            "VALUES('2', '2', fromUserId, @user_id, @amount)", conn);
-                    cmd.Parameters.AddWithValue("@user_id", userId);
+                    SqlCommand cmd = new SqlCommand("INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount)" +
+                                                        "VALUES(2, 2, " +
+                                                        "(SELECT accounts.account_id" +
+                                                        "FROM accounts" +
+                                                        "JOIN users ON users.user_id = accounts.user_id" +
+                                                        "WHERE accounts.user_id = @toUserId)" +
+                                                        "(SELECT accounts.account_id" +
+                                                        "FROM accounts" +
+                                                        "JOIN users ON users.user_id = accounts.user_id" +
+                                                        "WHERE accounts.user_id = @fromUserId), @amount)", conn);
+                    cmd.Parameters.AddWithValue("@toUserId", toUserId);
+                    cmd.Parameters.AddWithValue("@fromUserId", fromUserId);
                     cmd.Parameters.AddWithValue("@amount", amount);
                     cmd.ExecuteNonQuery();
 
 
-                    cmd = new SqlCommand("UPDATE accounts SET accounts.balance += transfers.amount" +
+                    cmd = new SqlCommand("UPDATE accounts " +
+                                            "SET accounts.balance = (accounts.balance - @amount)" +
                                             "FROM accounts" +
                                             "JOIN users ON users.user_id = accounts.user_id" +
-                                            "JOIN transfers ON transfers.account_to = accounts.account_id" +
-                                            "WHERE accounts.user_id = transfers.account_to", conn);
+                                            "JOIN transfers ON accounts.account_id = transfers.account_from" +
+                                            "WHERE accounts.account_id = @fromUserId", conn);
+                    cmd.Parameters.AddWithValue("@amount", amount);
+                    cmd.Parameters.AddWithValue("@fromUserId", fromUserId);
+                    cmd.ExecuteNonQuery();
+
+
+                    cmd = new SqlCommand("UPDATE accounts " +
+                                            "SET accounts.balance = (accounts.balance + @amount)" +
+                                            "FROM accounts" +
+                                            "JOIN users ON users.user_id = accounts.user_id" +
+                                            "JOIN transfers ON accounts.account_id = transfers.account_to" +
+                                            "WHERE accounts.account_id = @toUserId", conn);
+                    cmd.Parameters.AddWithValue("@toUserId", toUserId);
+                    cmd.Parameters.AddWithValue("@amount", amount);
+                    cmd.ExecuteNonQuery();
+
+
+                    cmd = new SqlCommand("SELECT @@IDENTITY", conn);
+                    int transferId = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    cmd.Parameters.AddWithValue("@transfer_id", transferId);
+                    cmd.Parameters.AddWithValue("@account_to", toUserId);
+                    cmd.Parameters.AddWithValue("@account_from", fromUserId);
+                    cmd.Parameters.AddWithValue("@amount", amount);
+                    cmd.ExecuteNonQuery();
+
                 }
             }
             catch (SqlException)
             {
+                //START HERE TOMORROW WITH EXCEPTION ERROR
+
                 throw;
             }
             return transfer;

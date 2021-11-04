@@ -50,14 +50,14 @@ namespace TenmoServer.Controllers
             return NotFound("Users not found");
         }
 
-        [HttpPut]
-        public ActionResult<Transfer> SendTransfer()
+        [HttpPut("transferamount")]
+        public ActionResult<Transfer> SendTransfer(int toUserId, int fromUserId, decimal amount)
         {
-            int userId = 0;
-            decimal amount = 0;
-            Transfer transfer = _userDao.SendATransfer(userId, amount);
+            int userId = Convert.ToInt32(User.FindFirst("sub")?.Value);
 
-            return Ok();
+            Transfer transfer = _userDao.SendATransfer(toUserId, fromUserId, amount);
+
+            return Ok("Transfer Successful");
         }
      
     }
