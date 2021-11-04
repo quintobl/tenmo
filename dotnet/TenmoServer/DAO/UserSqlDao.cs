@@ -161,9 +161,9 @@ namespace TenmoServer.DAO
                     
 
                     cmd = new SqlCommand("INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount)" +
-                                            "VALUES('2', '2', fromUserId, toUserId, 500)", conn);
+                                            "VALUES('2', '2', fromUserId, toUserId, @amount)", conn);
                     cmd.Parameters.AddWithValue("@userid", userId);
-                    cmd.Parameters.AddWithValue("@startBalance", startingBalance);
+                    cmd.Parameters.AddWithValue("@amount", amount);
                     cmd.ExecuteNonQuery();
 
 
