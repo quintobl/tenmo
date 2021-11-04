@@ -12,6 +12,7 @@ namespace TenmoServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     
     public class TransferController : ControllerBase
     {
@@ -25,18 +26,39 @@ namespace TenmoServer.Controllers
         [HttpGet]
         public ActionResult<decimal> GetMyBalance()
         {
-            User user = _userDao.GetUser(User.Identity.Name);
-            Account userAccount = _userDao.GetAccountBalance();
 
-            if (user != null) 
+            int userId = Convert.ToInt32(User.FindFirst("sub")?.Value);
+            
+            Account userAccount = _userDao.GetAccountBalance(userId);
+
+            if (userAccount != null)
             {
                 return Ok(userAccount.Balance);
             }
             return NotFound("Account not found");
         }
 
+        [HttpGet("users")]
+        public ActionResult<User> GetUsers()
+        {
+            List<User> userList = _userDao.GetUsers();
 
+            if (userList != null)
+            {
+                return Ok(userList);
+            }
+            return NotFound("Users not found");
+        }
 
+        [HttpPut]
+        public ActionResult<Transfer> SendTransfer()
+        {
+            int userId = 0;
+            decimal amount = 0;
+            Transfer transfer = _userDao.SendATransfer(userId, amount);
+
+            return Ok();
+        }
      
     }
 }

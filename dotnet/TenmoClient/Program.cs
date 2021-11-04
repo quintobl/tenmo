@@ -91,7 +91,8 @@ namespace TenmoClient
                 else if (menuSelection == 1)
                 {
                     
-                    Console.WriteLine($"Your current account balance is:");
+                    //Account account =
+                    //Console.WriteLine($"Your current account balance is: {account.Balance}");
                 }
                 else if (menuSelection == 2)
                 {
