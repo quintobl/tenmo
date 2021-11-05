@@ -174,12 +174,19 @@ namespace TenmoServer.DAO
 
                     cmd = new SqlCommand("SELECT @@IDENTITY", conn);
                     int transferId = Convert.ToInt32(cmd.ExecuteScalar());
+                    transfer.AccountFrom = fromUserId;
+                    transfer.AccountTo = toUserId;
+                    transfer.Amount = amount;
+                    transfer.TransferId = transferId;
+                    transfer.TransferStatusId = 2;
+                    transfer.TransferTypeId = 2;
                 }
             }
             catch (SqlException)
             {
                 throw;
             }
+            
             return transfer;
         }
 

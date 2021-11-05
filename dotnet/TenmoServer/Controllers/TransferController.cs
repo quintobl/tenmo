@@ -48,7 +48,7 @@ namespace TenmoServer.Controllers
         }
 
 
-        [HttpPut("transferamount/{toUserId}/{amount}")]
+        [HttpPost("transferamount/{toUserId}/{amount}")]
         public ActionResult<Transfer> SendTransfer(int toUserId, decimal amount)
         {
             int userId = Convert.ToInt32(User.FindFirst("sub")?.Value);

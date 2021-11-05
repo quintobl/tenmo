@@ -120,6 +120,8 @@ namespace TenmoClient
                     consoleService.PrintUsers(users);
 
                     string userInput = Console.ReadLine();
+                    string amount = Console.ReadLine();
+                    decimal amountToTransfer = 0;
 
                     try
                     {
@@ -129,7 +131,10 @@ namespace TenmoClient
                         }
                         else
                         {
-                            //Implement transfer
+                            int userId = Convert.ToInt32(userInput);
+                            amountToTransfer = Convert.ToDecimal(amount);
+                            Transfer transfer = apiService.MakeTransfer(userId, amountToTransfer);
+                            consoleService.PrintTransferSuccess(transfer);
                         }
                     }
                     catch (Exception ex)

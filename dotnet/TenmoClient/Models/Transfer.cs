@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TenmoClient.Models
 {
-    class Transfer
+    public class Transfer
     {
         public int TransferId { get; set; }
         public decimal Amount { get; set; }

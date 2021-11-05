@@ -12,6 +12,7 @@ namespace TenmoClient
         private readonly string API_URL = "";
         private readonly RestClient client = new RestClient();
         private ApiUser user = new ApiUser();
+        private Transfer transfer = new Transfer();
 
         public bool LoggedIn { get { return !string.IsNullOrWhiteSpace(user.Token); } }
 
@@ -43,6 +44,23 @@ namespace TenmoClient
             client.Authenticator = new JwtAuthenticator(UserService.GetToken());
             RestRequest request = new RestRequest(API_URL + "transfer" + "/" + "users");
             IRestResponse<List<User>> response = client.Get<List<User>>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            {
+                ProcessErrorResponse(response);
+            }
+            else
+            {
+                return response.Data;
+            }
+            return response.Data;
+        }
+
+        public Transfer MakeTransfer(int userId, decimal amountToTransfer)
+        {
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            RestRequest request = new RestRequest(API_URL + "transfer" + "/" + "transferamount" + "/" + userId + "/" + amountToTransfer);
+            IRestResponse<Transfer> response = client.Post<Transfer>(request);
 
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
             {

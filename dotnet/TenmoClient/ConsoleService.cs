@@ -91,6 +91,15 @@ namespace TenmoClient
             Console.WriteLine("------------");
             Console.WriteLine("Enter ID of user you are sending to (0 to cancel): ");
             Console.WriteLine("Enter amount: ");
+
+        }
+
+        public void PrintTransferSuccess(Transfer transfer)
+        {
+            if (transfer != null)
+            {
+                Console.WriteLine("Transfer was successful");
+            }
         }
 
     }
