@@ -70,5 +70,11 @@ namespace TenmoClient
             Console.WriteLine("");
             return pass;
         }
+
+        public void PrintBalance(decimal balance)
+        {
+            Console.WriteLine($"Your current account balance is: ${balance}");
+        }
+
     }
 }

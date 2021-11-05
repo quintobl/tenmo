@@ -138,7 +138,7 @@ namespace TenmoServer.DAO
 
         public Transfer SendATransfer(int toUserId, int fromUserId, decimal amount)
         {
-            
+
             Transfer transfer = new Transfer();
             try
             {
@@ -147,15 +147,8 @@ namespace TenmoServer.DAO
                     conn.Open();
 
                     SqlCommand cmd = new SqlCommand("INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount)" +
-                                                        "VALUES(2, 2, " +
-                                                        "(SELECT accounts.account_id" +
-                                                        "FROM accounts" +
-                                                        "JOIN users ON users.user_id = accounts.user_id" +
-                                                        "WHERE accounts.user_id = @toUserId)" +
-                                                        "(SELECT accounts.account_id" +
-                                                        "FROM accounts" +
-                                                        "JOIN users ON users.user_id = accounts.user_id" +
-                                                        "WHERE accounts.user_id = @fromUserId), @amount)", conn);
+                                                        $"VALUES(2, 2, (SELECT accounts.account_id FROM accounts WHERE user_id = { fromUserId })," +
+                                                        $"(SELECT accounts.account_id FROM accounts WHERE user_id = { toUserId}), { amount})", conn);
                     cmd.Parameters.AddWithValue("@toUserId", toUserId);
                     cmd.Parameters.AddWithValue("@fromUserId", fromUserId);
                     cmd.Parameters.AddWithValue("@amount", amount);
@@ -163,22 +156,17 @@ namespace TenmoServer.DAO
 
 
                     cmd = new SqlCommand("UPDATE accounts " +
-                                            "SET accounts.balance = (accounts.balance - @amount)" +
-                                            "FROM accounts" +
-                                            "JOIN users ON users.user_id = accounts.user_id" +
-                                            "JOIN transfers ON accounts.account_id = transfers.account_from" +
-                                            "WHERE accounts.account_id = @fromUserId", conn);
+                                            $"SET accounts.balance = (accounts.balance - {amount}) " +
+                                            "FROM accounts " +
+                                            $"WHERE accounts.account_id = {fromUserId}", conn);
                     cmd.Parameters.AddWithValue("@amount", amount);
                     cmd.Parameters.AddWithValue("@fromUserId", fromUserId);
                     cmd.ExecuteNonQuery();
 
 
                     cmd = new SqlCommand("UPDATE accounts " +
-                                            "SET accounts.balance = (accounts.balance + @amount)" +
-                                            "FROM accounts" +
-                                            "JOIN users ON users.user_id = accounts.user_id" +
-                                            "JOIN transfers ON accounts.account_id = transfers.account_to" +
-                                            "WHERE accounts.account_id = @toUserId", conn);
+                                            $"SET accounts.balance = (accounts.balance + {amount}) " +
+                                            $"WHERE accounts.account_id = {toUserId}", conn);
                     cmd.Parameters.AddWithValue("@toUserId", toUserId);
                     cmd.Parameters.AddWithValue("@amount", amount);
                     cmd.ExecuteNonQuery();
@@ -186,25 +174,14 @@ namespace TenmoServer.DAO
 
                     cmd = new SqlCommand("SELECT @@IDENTITY", conn);
                     int transferId = Convert.ToInt32(cmd.ExecuteScalar());
-
-                    cmd.Parameters.AddWithValue("@transfer_id", transferId);
-                    cmd.Parameters.AddWithValue("@account_to", toUserId);
-                    cmd.Parameters.AddWithValue("@account_from", fromUserId);
-                    cmd.Parameters.AddWithValue("@amount", amount);
-                    cmd.ExecuteNonQuery();
-
                 }
             }
             catch (SqlException)
             {
-                //START HERE TOMORROW WITH EXCEPTION ERROR
-
                 throw;
             }
             return transfer;
         }
-
-
 
 
         private User GetUserFromReader(SqlDataReader reader)
@@ -216,7 +193,6 @@ namespace TenmoServer.DAO
                 PasswordHash = Convert.ToString(reader["password_hash"]),
                 Salt = Convert.ToString(reader["salt"]),
             };
-
             return u;
         }
 
@@ -226,7 +202,7 @@ namespace TenmoServer.DAO
             {
                 AccountId = Convert.ToInt32(reader["account_id"]),
                 Balance = Convert.ToDecimal(reader["balance"]),
-                
+
             };
 
             return a.Balance;

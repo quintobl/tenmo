@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using TenmoServer.DAO;
 using TenmoServer.Models;
-using TenmoServer.Security;
-using Microsoft.AspNetCore.Authorization;
 
 namespace TenmoServer.Controllers
 {
@@ -50,12 +47,12 @@ namespace TenmoServer.Controllers
             return NotFound("Users not found");
         }
 
-        [HttpPut("transferamount")]
-        public ActionResult<Transfer> SendTransfer(int toUserId, int fromUserId, decimal amount)
+        [HttpPut("transferamount/{toUserId}/{amount}")]
+        public ActionResult<Transfer> SendTransfer(int toUserId, decimal amount)
         {
             int userId = Convert.ToInt32(User.FindFirst("sub")?.Value);
 
-            Transfer transfer = _userDao.SendATransfer(toUserId, fromUserId, amount);
+            Transfer transfer = _userDao.SendATransfer(toUserId, userId, amount);
 
             return Ok("Transfer Successful");
         }

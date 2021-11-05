@@ -6,6 +6,7 @@ namespace TenmoClient
 {
     class Program
     {
+        private static readonly ApiService apiService = new ApiService("https://localhost:44315/");
         private static readonly ConsoleService consoleService = new ConsoleService();
         private static readonly AuthService authService = new AuthService();
 
@@ -90,9 +91,24 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 1)
                 {
-                    
-                    //Account account =
-                    //Console.WriteLine($"Your current account balance is: {account.Balance}");
+
+                    try
+                    {
+                        decimal accountBalance = apiService.GetBalance();
+                        if (accountBalance !< 0)
+                        {
+                            consoleService.PrintBalance(accountBalance);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
+
+                    //Account account = new Account();
+                    //account.Balance;
+                    ////Console.WriteLine($"Your current account balance is: {account.Balance}");
                 }
                 else if (menuSelection == 2)
                 {
