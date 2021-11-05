@@ -21,7 +21,7 @@ namespace TenmoServer.Controllers
         }
 
         [HttpGet]
-        public ActionResult<decimal> GetMyBalance()
+        public ActionResult<Account> GetMyBalance()
         {
 
             int userId = Convert.ToInt32(User.FindFirst("sub")?.Value);
@@ -30,13 +30,13 @@ namespace TenmoServer.Controllers
 
             if (userAccount != null)
             {
-                return Ok(userAccount.Balance);
+                return Ok(userAccount);
             }
             return NotFound("Account not found");
         }
 
         [HttpGet("users")]
-        public ActionResult<User> GetUsers()
+        public ActionResult<List<User>> GetUsers()
         {
             List<User> userList = _userDao.GetUsers();
 
@@ -46,6 +46,7 @@ namespace TenmoServer.Controllers
             }
             return NotFound("Users not found");
         }
+
 
         [HttpPut("transferamount/{toUserId}/{amount}")]
         public ActionResult<Transfer> SendTransfer(int toUserId, decimal amount)

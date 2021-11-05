@@ -20,10 +20,29 @@ namespace TenmoClient
             API_URL = api_url;
         }
 
-        public decimal GetBalance()
+
+        public Account GetBalance()
         {
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
             RestRequest request = new RestRequest(API_URL + "transfer");
-            IRestResponse<decimal> response = client.Get<decimal>(request);
+            IRestResponse<Account> response = client.Get<Account>(request);
+         
+                if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+                {
+                    ProcessErrorResponse(response);
+                }
+                else
+                {
+                    return response.Data;
+                }
+            return response.Data;
+        }
+
+        public List<User> GetUsers()
+        {
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            RestRequest request = new RestRequest(API_URL + "transfer" + "/" + "users");
+            IRestResponse<List<User>> response = client.Get<List<User>>(request);
 
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
             {
@@ -36,7 +55,9 @@ namespace TenmoClient
             return response.Data;
         }
 
-        private void ProcessErrorResponse(IRestResponse<decimal> response)
+
+
+        private void ProcessErrorResponse(IRestResponse response)
         {
             if (response.ResponseStatus != ResponseStatus.Completed)
             {
@@ -47,5 +68,22 @@ namespace TenmoClient
                 throw new NonSuccessException((int)response.StatusCode);
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
     }
 }

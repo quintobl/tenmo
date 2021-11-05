@@ -76,5 +76,22 @@ namespace TenmoClient
             Console.WriteLine($"Your current account balance is: ${balance}");
         }
 
+        public void PrintUsers(List<User> users)
+        {
+            Console.WriteLine("----------------------------------------------");
+            Console.WriteLine("Users");
+            Console.WriteLine("ID          Name");
+            Console.WriteLine("----------------------------------------------");
+
+            foreach (User user in users)
+            {
+                Console.WriteLine(user.UserId + "         " + user.Username);
+            }
+            
+            Console.WriteLine("------------");
+            Console.WriteLine("Enter ID of user you are sending to (0 to cancel): ");
+            Console.WriteLine("Enter amount: ");
+        }
+
     }
 }

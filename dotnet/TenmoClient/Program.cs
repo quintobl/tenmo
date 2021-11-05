@@ -94,10 +94,10 @@ namespace TenmoClient
 
                     try
                     {
-                        decimal accountBalance = apiService.GetBalance();
-                        if (accountBalance !< 0)
+                        Account accountBalance = apiService.GetBalance();
+                        if (accountBalance.Balance >= 0)
                         {
-                            consoleService.PrintBalance(accountBalance);
+                            consoleService.PrintBalance(accountBalance.Balance);
                         }
                     }
                     catch (Exception ex)
@@ -105,10 +105,6 @@ namespace TenmoClient
                         Console.WriteLine(ex.Message);
                     }
 
-
-                    //Account account = new Account();
-                    //account.Balance;
-                    ////Console.WriteLine($"Your current account balance is: {account.Balance}");
                 }
                 else if (menuSelection == 2)
                 {
@@ -120,7 +116,26 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 4)
                 {
+                    List<User> users = apiService.GetUsers();
+                    consoleService.PrintUsers(users);
 
+                    string userInput = Console.ReadLine();
+
+                    try
+                    {
+                        if (Convert.ToInt32(userInput) == (0))
+                        {
+                            MenuSelection();
+                        }
+                        else
+                        {
+                            //Implement transfer
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                 }
                 else if (menuSelection == 5)
                 {
