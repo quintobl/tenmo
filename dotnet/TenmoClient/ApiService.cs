@@ -16,8 +16,8 @@ namespace TenmoClient
         private ApiUser user = new ApiUser();
         private Transfer transfer = new Transfer();
 
-        public bool LoggedIn { get { return !string.IsNullOrWhiteSpace(user.Token); } }
-
+        //public bool LoggedIn { get { return !string.IsNullOrWhiteSpace(user.Token); } }
+        
         public ApiService(string api_url)
         {
             API_URL = api_url;

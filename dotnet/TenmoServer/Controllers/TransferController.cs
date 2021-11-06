@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using TenmoServer.DAO;
 using TenmoServer.Models;
 
@@ -23,9 +24,8 @@ namespace TenmoServer.Controllers
         [HttpGet]
         public ActionResult<Account> GetMyBalance()
         {
-
             int userId = Convert.ToInt32(User.FindFirst("sub")?.Value);
-            
+
             Account userAccount = _userDao.GetAccountBalance(userId);
 
             if (userAccount != null)
@@ -63,7 +63,7 @@ namespace TenmoServer.Controllers
         public ActionResult<List<Transfer>> GetTransfers()
         {
             int userId = Convert.ToInt32(User.FindFirst("sub")?.Value);
-
+            
             List<Transfer> transferList = _userDao.ViewAllTransfers(userId);
 
             if (transferList != null)
