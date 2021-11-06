@@ -109,6 +109,31 @@ namespace TenmoClient
                 }
                 else if (menuSelection == 2)
                 {
+                    List<Transfer> transfers = apiService.GetTransfers();
+                    consoleService.PrintUsers(users);
+
+                    string userInput = Console.ReadLine();
+                    string amount = Console.ReadLine();
+                    decimal amountToTransfer = 0;
+
+                    try
+                    {
+                        if (Convert.ToInt32(userInput) == (0))
+                        {
+                            MenuSelection();
+                        }
+                        else
+                        {
+                            int userId = Convert.ToInt32(userInput);
+                            amountToTransfer = Convert.ToDecimal(amount);
+                            string transfer = apiService.MakeTransfer(userId, amountToTransfer);
+                            consoleService.PrintTransferSuccess(transfer);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
 
                 }
                 else if (menuSelection == 3)
