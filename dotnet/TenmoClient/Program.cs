@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TenmoClient.Models;
+using RestSharp;
 
 namespace TenmoClient
 {
@@ -133,7 +134,7 @@ namespace TenmoClient
                         {
                             int userId = Convert.ToInt32(userInput);
                             amountToTransfer = Convert.ToDecimal(amount);
-                            Transfer transfer = apiService.MakeTransfer(userId, amountToTransfer);
+                            string transfer = apiService.MakeTransfer(userId, amountToTransfer);
                             consoleService.PrintTransferSuccess(transfer);
                         }
                     }

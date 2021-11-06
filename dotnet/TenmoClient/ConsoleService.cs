@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TenmoClient.Models;
+using RestSharp;
 
 namespace TenmoClient
 {
@@ -94,7 +95,7 @@ namespace TenmoClient
 
         }
 
-        public void PrintTransferSuccess(Transfer transfer)
+        public void PrintTransferSuccess(string transfer)
         {
             if (transfer != null)
             {

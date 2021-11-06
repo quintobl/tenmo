@@ -9,7 +9,7 @@ namespace TenmoServer.DAO
         User AddUser(string username, string password);
         List<User> GetUsers();
         Account GetAccountBalance(int userId);
-
         Transfer SendATransfer(int toUserId, int fromUserId, decimal amount);
+        List<Transfer> ViewAllTransfers(int userId);
     }
 }

@@ -4,6 +4,8 @@ using RestSharp;
 using RestSharp.Authenticators;
 using TenmoClient.Exceptions;
 using TenmoClient.Models;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace TenmoClient
 {
@@ -56,11 +58,15 @@ namespace TenmoClient
             return response.Data;
         }
 
-        public Transfer MakeTransfer(int userId, decimal amountToTransfer)
+        public string MakeTransfer(int userId, decimal amountToTransfer)
         {
+            Transfer transfer = new Transfer();
+            transfer.AccountFrom = userId;
+            transfer.Amount = amountToTransfer;
             client.Authenticator = new JwtAuthenticator(UserService.GetToken());
-            RestRequest request = new RestRequest(API_URL + "transfer" + "/" + "transferamount" + "/" + userId + "/" + amountToTransfer);
-            IRestResponse<Transfer> response = client.Post<Transfer>(request);
+            RestRequest request = new RestRequest(API_URL + "transfer" + "/" + "transferamount" + "/" + transfer.AccountFrom + "/" + transfer.Amount);
+            request.AddJsonBody(transfer);
+            IRestResponse<string> response = client.Put<string>(request);
 
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
             {
@@ -70,7 +76,7 @@ namespace TenmoClient
             {
                 return response.Data;
             }
-            return response.Data;
+            return null;
         }
 
 

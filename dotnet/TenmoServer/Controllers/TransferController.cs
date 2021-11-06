@@ -48,7 +48,7 @@ namespace TenmoServer.Controllers
         }
 
 
-        [HttpPost("transferamount/{toUserId}/{amount}")]
+        [HttpPut("transferamount/{toUserId}/{amount}")]
         public ActionResult<Transfer> SendTransfer(int toUserId, decimal amount)
         {
             int userId = Convert.ToInt32(User.FindFirst("sub")?.Value);
@@ -57,6 +57,21 @@ namespace TenmoServer.Controllers
 
             return Ok("Transfer Successful");
         }
-     
+
+
+        [HttpGet("list")]
+        public ActionResult<List<Transfer>> GetTransfers()
+        {
+            int userId = Convert.ToInt32(User.FindFirst("sub")?.Value);
+
+            List<Transfer> transferList = _userDao.ViewAllTransfers(userId);
+
+            if (transferList != null)
+            {
+                return Ok(transferList);
+            }
+            return NotFound("Transfers not found");
+        }
+
     }
 }
