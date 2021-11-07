@@ -74,7 +74,7 @@ namespace TenmoServer.Controllers
         }
 
 
-        [HttpGet("single")]
+        [HttpGet("single/{transferId}")]
         public ActionResult<Transfer> GetSingleTransfer(int transferId)
         {
             int userId = Convert.ToInt32(User.FindFirst("sub")?.Value);

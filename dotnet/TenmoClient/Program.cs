@@ -112,7 +112,9 @@ namespace TenmoClient
                     List<Transfer> transfers = apiService.GetTransfers();
                     consoleService.PrintTransferList(transfers);
 
+                    Console.WriteLine("Please enter transfer ID (0 to cancel): ");
                     string userInput = Console.ReadLine();
+                    
                     
                     try
                     {
@@ -122,9 +124,16 @@ namespace TenmoClient
                         }
                         else
                         {
-                            int userId = Convert.ToInt32(userInput);
-                           
-                            //consoleService.PrintTransferSuccess(transfer);
+                            foreach (Transfer transfer in transfers)
+                            {
+                                if (Convert.ToInt32(userInput) == transfer.TransferId)
+                                {
+                                    Transfer singleTransfer = new Transfer();
+                                    singleTransfer = apiService.GetSingleTransfer(Convert.ToInt32(userInput));
+                                    consoleService.PrintASingleTransfer(singleTransfer);
+                                }
+                            }
+
                         }
                     }
                     catch (Exception ex)
@@ -156,8 +165,19 @@ namespace TenmoClient
                         {
                             int userId = Convert.ToInt32(userInput);
                             amountToTransfer = Convert.ToDecimal(amount);
-                            string transfer = apiService.MakeTransfer(userId, amountToTransfer);
-                            consoleService.PrintTransferSuccess(transfer);
+
+                            decimal balanceOfUser = apiService.GetBalance().Balance;
+
+                            if (balanceOfUser < amountToTransfer)
+                            {
+                                consoleService.PrintUserStatementIfBalanceIsNotEnough();
+                            }
+                            else
+                            {
+                                string transfer = apiService.MakeTransfer(userId, amountToTransfer);
+                                consoleService.PrintTransferSuccess(transfer);
+                            }
+                            MenuSelection();
                         }
                     }
                     catch (Exception ex)

@@ -270,12 +270,12 @@ namespace TenmoServer.DAO
                     conn.Open();
 
                     SqlCommand cmd = new SqlCommand("SELECT transfers.transfer_id, transfers.transfer_type_id, " +
-                                                    "transfers.transfer_status_id, transfers.account_from," +
-                                                    " transfers.account_to, transfers.amount, users.username, " +
+                                                    "transfers.transfer_status_id, transfers.account_from, " +
+                                                    "transfers.account_to, transfers.amount, users.username, " +
                                                     "accounts.account_id " +
                                                     "FROM transfers " +
                                                     "JOIN accounts ON accounts.account_id = transfers.account_from " +
-                                                    "OR accounts.account_id = transfers.account_to" +
+                                                    "OR accounts.account_id = transfers.account_to " +
                                                     "JOIN users ON accounts.user_id = users.user_id " +
                                                     $"WHERE transfers.transfer_id = {transferId}", conn);
                     cmd.Parameters.AddWithValue("@transferId", transferId);

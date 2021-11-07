@@ -131,13 +131,30 @@ namespace TenmoClient
                         from + userFrom + "              " + "$" + transfer.Amount);
                     }
                 }
-                
-                
-                //string userName = Convert.ToString(user.Username);
-
- 
-                
             }
+        }
+
+        public void PrintASingleTransfer(Transfer transfer)
+        {
+            if (transfer.TransferTypeId == 2)
+            {
+                string send = "Send";
+
+                Console.WriteLine("----------------------------------------------");
+                Console.WriteLine("Transfer Details");
+                Console.WriteLine("----------------------------------------------");
+                Console.WriteLine("Id: " + transfer.TransferId);
+                Console.WriteLine("From: " + transfer.AccountFrom);
+                Console.WriteLine("To: " + transfer.AccountTo);
+                Console.WriteLine("Type: " + transfer.TransferTypeId);
+                Console.WriteLine("Status: " + send);
+                Console.WriteLine("Amount: " + "$" + transfer.Amount);
+            }
+        }
+
+        public void PrintUserStatementIfBalanceIsNotEnough()
+        {
+            Console.WriteLine("Sorry, you do not have enough funds to make a transfer.");
         }
 
 
