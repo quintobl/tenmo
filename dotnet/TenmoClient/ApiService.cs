@@ -96,6 +96,23 @@ namespace TenmoClient
             return response.Data;
         }
 
+        public Transfer GetSingleTransfer()
+        {
+            client.Authenticator = new JwtAuthenticator(UserService.GetToken());
+            RestRequest request = new RestRequest(API_URL + "single");
+            IRestResponse<Transfer> response = client.Get<Transfer>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            {
+                ProcessErrorResponse(response);
+            }
+            else
+            {
+                return response.Data;
+            }
+            return response.Data;
+        }
+
 
 
         private void ProcessErrorResponse(IRestResponse response)

@@ -11,5 +11,6 @@ namespace TenmoServer.DAO
         Account GetAccountBalance(int userId);
         Transfer SendATransfer(int toUserId, int fromUserId, decimal amount);
         List<Transfer> ViewAllTransfers(int userId);
+        public Transfer GetSingleTransfer(int transferId);
     }
 }

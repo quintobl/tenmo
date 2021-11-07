@@ -73,5 +73,20 @@ namespace TenmoServer.Controllers
             return NotFound("Transfers not found");
         }
 
+
+        [HttpGet("single")]
+        public ActionResult<Transfer> GetSingleTransfer(int transferId)
+        {
+            int userId = Convert.ToInt32(User.FindFirst("sub")?.Value);
+
+            Transfer transfer = _userDao.GetSingleTransfer(transferId);
+
+            if (transfer != null)
+            {
+                return Ok(transfer);
+            }
+            return NotFound("Transfers not found");
+        }
+
     }
 }

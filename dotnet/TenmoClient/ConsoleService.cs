@@ -107,25 +107,35 @@ namespace TenmoClient
         {
             Console.WriteLine("----------------------------------------------");
             Console.WriteLine("Transfers");
-            Console.WriteLine("ID               From/To                Amount");
+            Console.WriteLine("ID           From/To                Amount");
             Console.WriteLine("----------------------------------------------");
             foreach (Transfer transfer in transfers)
+
             {
-                string to = "To: ";
-                string from = "From: ";
+                if (transfer.TransferTypeId == 2)
+                {
+                    string to = "To: ";
+                    string from = "From: ";
+                    string userFrom = "";
+                    string userTo = "";
+                    if (transfer.AccountFrom == transfer.AccountId)
+                    {
+                        userTo = Convert.ToString(transfer.AccountTo);
+                        Console.WriteLine(transfer.TransferId + "         " +
+                        to + userTo + "                   " + "$" + transfer.Amount);
+                    }
+                    else
+                    {
+                        userFrom = Convert.ToString(transfer.AccountFrom);
+                        Console.WriteLine(transfer.TransferId + "         " +
+                        from + userFrom + "              " + "$" + transfer.Amount);
+                    }
+                }
+                
                 
                 //string userName = Convert.ToString(user.Username);
 
-
-                if (transfer.TransferTypeId == 2)
-                {
-                    Console.WriteLine(transfer.TransferId + "         " + 
-                        to + Environment.UserName + "         " + "$" + transfer.Amount);
-                } else if (transfer.TransferTypeId == 1)
-                {
-                    Console.WriteLine(transfer.TransferId + "         " +
-                        from + Environment.UserName + "         " + "$" + transfer.Amount);
-                }
+ 
                 
             }
         }

@@ -202,20 +202,51 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT transfers.transfer_id, transfers.transfer_type_id, transfers.transfer_status_id, transfers.account_from, transfers.account_to, transfers.amount, users.username " +
+                    SqlCommand cmd = new SqlCommand("SELECT transfers.transfer_id, transfers.transfer_type_id, transfers.transfer_status_id, transfers.account_from, transfers.account_to, transfers.amount, users.username, accounts.account_id " +
                                                         "FROM transfers " +
                                                         "JOIN accounts ON accounts.account_id = transfers.account_from OR accounts.account_id = transfers.account_to " +
                                                         "JOIN users ON accounts.user_id = users.user_id " +
                                                         "WHERE users.user_id = @userid", conn);
                     cmd.Parameters.AddWithValue("@userid", userId);
                     cmd.ExecuteNonQuery();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    SqlDataReader reader1 = cmd.ExecuteReader();
 
-                    while (reader.Read())
+
+                    //cmd = new SqlCommand($"SELECT TOP 1 users.username " +
+                    //                        "FROM users " +
+                    //                        "JOIN accounts ON accounts.user_id = users.user_id " +
+                    //                        "JOIN transfers ON transfers.account_from = accounts.account_id", conn);
+                    ////cmd.Parameters.AddWithValue("@username", username);
+                    //cmd.ExecuteNonQuery();
+                    //SqlDataReader reader2 = cmd.ExecuteReader();
+
+
+                    //cmd = new SqlCommand("SELECT TOP 1 users.username " +
+                    //                        "FROM users " +
+                    //                        "JOIN accounts ON accounts.user_id = users.user_id " +
+                    //                        "JOIN transfers ON transfers.account_to = accounts.account_id", conn);
+                    ////cmd.Parameters.AddWithValue("@username", username);
+                    //cmd.ExecuteNonQuery();
+                    //SqlDataReader reader3 = cmd.ExecuteReader();
+
+
+                    while (reader1.Read())
                     {
-                        Transfer t = GetTransfersFromReader(reader);
+                        Transfer t = GetTransfersFromReader1(reader1);
                         returnTransfers.Add(t);
                     }
+
+                    //while (reader2.Read())
+                    //{
+                    //    Transfer t = GetTransfersFromReader2(reader2);
+                    //    returnTransfers.Add(t);
+                    //}
+
+                    //while (reader3.Read())
+                    //{
+                    //    Transfer t = GetTransfersFromReader3(reader3);
+                    //    returnTransfers.Add(t);
+                    //}
                 }
             }
             catch (SqlException)
@@ -228,33 +259,41 @@ namespace TenmoServer.DAO
 
 
 
-        //public Transfer GetTransferDetails(int transferId)
-        //{
-        //    Transfer returnTransfer = null;
+        public Transfer GetSingleTransfer(int transferId)
+        {
+            Transfer returnTransfer = null;
 
-        //    try
-        //    {
-        //        using (SqlConnection conn = new SqlConnection(connectionString))
-        //        {
-        //            conn.Open();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
 
-        //            SqlCommand cmd = new SqlCommand("SELECT user_id, username, password_hash, salt FROM users WHERE username = @username", conn);
-        //            cmd.Parameters.AddWithValue("@username", username);
-        //            SqlDataReader reader = cmd.ExecuteReader();
+                    SqlCommand cmd = new SqlCommand("SELECT transfers.transfer_id, transfers.transfer_type_id, " +
+                                                    "transfers.transfer_status_id, transfers.account_from," +
+                                                    " transfers.account_to, transfers.amount, users.username, " +
+                                                    "accounts.account_id " +
+                                                    "FROM transfers " +
+                                                    "JOIN accounts ON accounts.account_id = transfers.account_from " +
+                                                    "OR accounts.account_id = transfers.account_to" +
+                                                    "JOIN users ON accounts.user_id = users.user_id " +
+                                                    $"WHERE transfers.transfer_id = {transferId}", conn);
+                    cmd.Parameters.AddWithValue("@transferId", transferId);
+                    SqlDataReader reader = cmd.ExecuteReader();
 
-        //            if (reader.Read())
-        //            {
-        //                returnUser = GetUserFromReader(reader);
-        //            }
-        //        }
-        //    }
-        //    catch (SqlException)
-        //    {
-        //        throw;
-        //    }
+                    if (reader.Read())
+                    {
+                        returnTransfer = GetTransfersFromReader1(reader);
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
 
-        //    return returnUser;
-        //}
+            return returnTransfer;
+        }
 
 
 
@@ -282,19 +321,65 @@ namespace TenmoServer.DAO
             return a.Balance;
         }
 
-        private Transfer GetTransfersFromReader(SqlDataReader reader)
+        private Transfer GetTransfersFromReader1(SqlDataReader reader1)
         {
             Transfer t = new Transfer();
             {
-                t.TransferId = Convert.ToInt32(reader["transfer_id"]);
-                t.Amount = Convert.ToDecimal(reader["amount"]);
-                t.TransferStatusId = Convert.ToInt32(reader["transfer_status_id"]);
-                t.TransferTypeId = Convert.ToInt32(reader["transfer_type_id"]);
-                t.AccountFrom = Convert.ToInt32(reader["account_from"]);
-                t.AccountTo = Convert.ToInt32(reader["account_to"]);
+                t.TransferId = Convert.ToInt32(reader1["transfer_id"]);
+                t.Amount = Convert.ToDecimal(reader1["amount"]);
+                t.TransferStatusId = Convert.ToInt32(reader1["transfer_status_id"]);
+                t.TransferTypeId = Convert.ToInt32(reader1["transfer_type_id"]);
+                t.AccountFrom = Convert.ToInt32(reader1["account_from"]);
+                t.AccountTo = Convert.ToInt32(reader1["account_to"]);
+                t.AccountId = Convert.ToInt32(reader1["account_id"]);
+                t.UserName = Convert.ToString(reader1["username"]);
+                t.ToUserName = Convert.ToString(reader1["username"]);
+                t.FromUserName = Convert.ToString(reader1["username"]);
 
             };
             return t;
-    }
+        }
+
+        //private Transfer GetTransfersFromReader2(SqlDataReader reader2)
+        //{
+        //    Transfer t = new Transfer();
+        //    {
+        //        t.TransferId = Convert.ToInt32(reader2["transfer_id"]);
+        //        t.Amount = Convert.ToDecimal(reader2["amount"]);
+        //        t.TransferStatusId = Convert.ToInt32(reader2["transfer_status_id"]);
+        //        t.TransferTypeId = Convert.ToInt32(reader2["transfer_type_id"]);
+        //        t.AccountFrom = Convert.ToInt32(reader2["account_from"]);
+        //        t.AccountTo = Convert.ToInt32(reader2["account_to"]);
+        //        t.AccountId = Convert.ToInt32(reader2["account_id"]);
+        //        t.UserName = Convert.ToString(reader2["username"]);
+        //        t.ToUserName = Convert.ToString(reader2["username"]);
+        //        t.FromUserName = Convert.ToString(reader2["username"]);
+
+        //    };
+        //    return t;
+        //}
+
+
+        //private Transfer GetTransfersFromReader3(SqlDataReader reader3)
+        //{
+        //    Transfer t = new Transfer();
+        //    {
+        //        t.TransferId = Convert.ToInt32(reader3["transfer_id"]);
+        //        t.Amount = Convert.ToDecimal(reader3["amount"]);
+        //        t.TransferStatusId = Convert.ToInt32(reader3["transfer_status_id"]);
+        //        t.TransferTypeId = Convert.ToInt32(reader3["transfer_type_id"]);
+        //        t.AccountFrom = Convert.ToInt32(reader3["account_from"]);
+        //        t.AccountTo = Convert.ToInt32(reader3["account_to"]);
+        //        t.AccountId = Convert.ToInt32(reader3["account_id"]);
+        //        t.UserName = Convert.ToString(reader3["username"]);
+        //        t.ToUserName = Convert.ToString(reader3["username"]);
+        //        t.FromUserName = Convert.ToString(reader3["username"]);
+
+        //    };
+        //    return t;
+        //}
+
+
+
     }
 }
