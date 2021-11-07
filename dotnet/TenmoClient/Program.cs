@@ -110,12 +110,10 @@ namespace TenmoClient
                 else if (menuSelection == 2)
                 {
                     List<Transfer> transfers = apiService.GetTransfers();
-                    consoleService.PrintUsers(users);
+                    consoleService.PrintTransferList(transfers);
 
                     string userInput = Console.ReadLine();
-                    string amount = Console.ReadLine();
-                    decimal amountToTransfer = 0;
-
+                    
                     try
                     {
                         if (Convert.ToInt32(userInput) == (0))
@@ -125,9 +123,8 @@ namespace TenmoClient
                         else
                         {
                             int userId = Convert.ToInt32(userInput);
-                            amountToTransfer = Convert.ToDecimal(amount);
-                            string transfer = apiService.MakeTransfer(userId, amountToTransfer);
-                            consoleService.PrintTransferSuccess(transfer);
+                           
+                            //consoleService.PrintTransferSuccess(transfer);
                         }
                     }
                     catch (Exception ex)

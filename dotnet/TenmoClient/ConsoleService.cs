@@ -112,10 +112,19 @@ namespace TenmoClient
             foreach (Transfer transfer in transfers)
             {
                 string to = "To: ";
+                string from = "From: ";
                 
+                //string userName = Convert.ToString(user.Username);
+
+
                 if (transfer.TransferTypeId == 2)
                 {
-                    Console.WriteLine(transfer.TransferId + "         " + to + Environment.UserName);
+                    Console.WriteLine(transfer.TransferId + "         " + 
+                        to + Environment.UserName + "         " + "$" + transfer.Amount);
+                } else if (transfer.TransferTypeId == 1)
+                {
+                    Console.WriteLine(transfer.TransferId + "         " +
+                        from + Environment.UserName + "         " + "$" + transfer.Amount);
                 }
                 
             }
